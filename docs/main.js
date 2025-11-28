@@ -16,29 +16,23 @@ let currentPageId = 'introduction';
 // =========================================================================
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 1. Temayı ve Dili uygula (Sayfa render edilmeden)
         applyTheme(currentTheme);
         applyLang(currentLang);
-
-        // 2. Kritik Verileri Yükle (Menu, Versions, News)
+)
         await loadInitialData();
 
-        // 3. URL'den gidilecek sayfayı bul
         let hash = window.location.hash.substring(1);
         const allPageIds = getAllPageIds();
-        
-        // Geçerli bir sayfa mı veya özel sayfa mı?
+
         if (allPageIds.includes(hash) || hash === 'news') {
             currentPageId = hash;
         } else {
             currentPageId = 'introduction';
         }
 
-        // 4. Arayüzü Çiz
         renderSidebar();
         await loadPage(currentPageId);
-        
-        // 5. Event Dinleyicilerini Başlat
+
         setupEventListeners();
 
     } catch (err) {
@@ -53,8 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadInitialData() {
     try {
-        // JSON dosyalarını 'content' klasöründen çekiyoruz
-        // Cache-busting: URL'ye timestamp ekle, böylece tarayıcı her zaman yeni dosyayı çeker
         const cacheBuster = `?v=${Date.now()}`;
         const [menuRes, verRes, newsRes] = await Promise.all([
             fetch(`./content/menu.json${cacheBuster}`),
@@ -69,7 +61,6 @@ async function loadInitialData() {
             NEWS_DATA = [];
         } else {
             NEWS_DATA = await newsRes.json();
-            // News dizisini sırala (eğer dizi ise)
             if (Array.isArray(NEWS_DATA)) {
                 NEWS_DATA.sort((a, b) => new Date(b.date) - new Date(a.date));
             }
@@ -78,17 +69,16 @@ async function loadInitialData() {
         MENU_DATA = await menuRes.json();
         VERSIONS_DATA = await verRes.json();
 
-        // Tarihe göre sırala (En yeni en üstte)
         if (Array.isArray(VERSIONS_DATA)) {
             VERSIONS_DATA.sort((a, b) => new Date(b.date) - new Date(a.date));
         }
     } catch (err) {
         console.error('Error loading initial data:', err);
-        // Initialize with empty defaults to prevent crashes
+
         if (!MENU_DATA) MENU_DATA = { en: [], tr: [] };
         if (!VERSIONS_DATA) VERSIONS_DATA = [];
         if (!NEWS_DATA) NEWS_DATA = [];
-        throw err; // Re-throw so initialization knows it failed
+        throw err;
     }
 }
 
@@ -132,12 +122,10 @@ async function loadPage(id) {
     await new Promise(r => setTimeout(r, 150));
 
     try {
-        // SABİT SAYFALAR
         if (id === 'news') {
             renderNewsLayout(container);
         } 
         else if (id === 'benchmark') {
-            // Benchmark sayfası özel içeriğini göster
             const res = await fetch(`./content/${id}.json?v=${Date.now()}`);
             if (!res.ok) throw new Error(`Content file '${id}.json' not found.`);
             const pageData = await res.json();
@@ -145,7 +133,6 @@ async function loadPage(id) {
             container.innerHTML = parseSyntax(rawContent);
             initBenchmark();
         }
-        // DİNAMİK SAYFALAR (JSON'dan çek)
         else {
             const res = await fetch(`./content/${id}.json?v=${Date.now()}`);
             if (!res.ok) {
@@ -172,7 +159,7 @@ async function loadPage(id) {
 function renderNewsLayout(container) {
     const isEn = currentLang === 'en';
     
-    // Haber verisini hazırla
+    
     let listToRender = [];
     if (!NEWS_DATA) {
         console.error('NEWS_DATA is not loaded yet');
@@ -183,14 +170,12 @@ function renderNewsLayout(container) {
     if (Array.isArray(NEWS_DATA)) {
         listToRender = NEWS_DATA;
     } else {
-        // Eğer dil bazlı obje ise
         listToRender = NEWS_DATA[currentLang] || NEWS_DATA['en'] || [];
         if (Array.isArray(listToRender)) {
             listToRender.sort((a, b) => new Date(b.date) - new Date(a.date));
         }
     }
 
-    // Haberleri HTML'e çevir
     let newsHtml = "";
     if (!Array.isArray(listToRender) || listToRender.length === 0) {
         newsHtml = `<p style="opacity:0.6">${isEn ? 'No news available.' : 'Haber bulunamadı.'}</p>`;
@@ -209,7 +194,6 @@ function renderNewsLayout(container) {
                     descriptionText = '';
                 }
                 
-                // Ensure descriptionText is always a string (final safety check)
                 if (typeof descriptionText !== 'string') {
                     descriptionText = String(descriptionText || '');
                 }
@@ -236,7 +220,6 @@ function renderNewsLayout(container) {
         }
     }
 
-    // Sağ taraftaki sürüm listesi
     let versionsHtml = "";
     if (Array.isArray(VERSIONS_DATA)) {
             versionsHtml = VERSIONS_DATA.map(v => 
@@ -246,7 +229,6 @@ function renderNewsLayout(container) {
             ).join('');
     }
 
-    // Detaylı Changelog Kartları
     let changelogHtml = "";
     if (Array.isArray(VERSIONS_DATA)) {
         changelogHtml = renderVersionCards(VERSIONS_DATA, true);
@@ -266,13 +248,10 @@ function renderNewsLayout(container) {
     `;
 }
 
-// Helper function to format version numbers (v1.0.0 -> v1, v0.1.0 -> v0.1)
 function formatVersion(version) {
     if (!version || typeof version !== 'string') return version || '';
-    // Remove 'v' prefix if exists
     const withoutV = version.replace(/^v/i, '');
     const parts = withoutV.split('.');
-    // If patch is 0, show only major.minor, if both minor and patch are 0, show only major
     if (parts.length >= 3) {
         const major = parts[0] || '0';
         const minor = parts[1] || '0';
@@ -293,7 +272,7 @@ function renderVersionCards(versionList, isEmbedded = false) {
     if (!versionList || versionList.length === 0) return '';
 
     return versionList.map(v => {
-        // Benchmark bilgisi
+
         let benchmarkHtml = '';
         if (v.benchmark) {
             const savings = v.benchmark.std && v.benchmark.oblit 
@@ -317,7 +296,7 @@ function renderVersionCards(versionList, isEmbedded = false) {
                 </div>`;
         }
         
-        // Changes HTML - daha güzel formatlanmış
+
         let changesHtml = '';
         if (v.changes) {
             const sectionLabels = {
@@ -340,7 +319,7 @@ function renderVersionCards(versionList, isEmbedded = false) {
                             </h4>
                             <div style="display:grid; gap:10px;">
                                 ${v.changes[tag].map(change => {
-                                    // Markdown bold (**text**) ve emojileri parse et
+
                                     const formattedChange = formatText(change || '');
                                     return `
                                         <div style="background:var(--sidebar); padding:12px 15px; border-radius:6px; border-left:3px solid ${config.color}; display:flex; align-items:flex-start; gap:10px;">
@@ -403,21 +382,17 @@ function initBenchmark() {
     const container = document.getElementById('benchmark-interactive');
     if (!container) return;
 
-    // Veri yoksa hata göster
     if (!VERSIONS_DATA || VERSIONS_DATA.length === 0) {
         container.innerHTML = `<div style="padding:20px; color:red;">Benchmark verisi yüklenemedi.</div>`;
         return;
     }
 
-    // Benchmark verisi olan en yeni sürümü bul
-    // (Her sürümde benchmark olmayabilir, filtreliyoruz)
     const latestBenchVer = VERSIONS_DATA.find(v => v.benchmark);
-    
-    // Varsayılan Başlık (Eğer veri varsa sürüm adı, yoksa N/A)
+
     const defaultTitle = latestBenchVer ? `${formatVersion(latestBenchVer.version)} (${latestBenchVer.tag || latestBenchVer.type})` : "Veri Yok";
     const defaultDate = latestBenchVer ? `(${latestBenchVer.date})` : "";
 
-    // HTML İskeleti (Varsayılan değerleri direkt içine gömdük, titreme yapmaz)
+
     container.innerHTML = `
         <div class="bench-tool">
             <div class="bench-controls">
@@ -442,14 +417,14 @@ function initBenchmark() {
         </div>
     `;
 
-    // Event Listener'lar
+
     const btn = document.getElementById('versionSelectBtn');
     const modal = document.getElementById('versionModal');
     const search = document.getElementById('modalVersionSearch');
 
     btn.onclick = (e) => { e.stopPropagation(); openVersionModal(); };
     
-    // Modalı kapatma mantığı
+
     window.addEventListener('click', (e) => {
         if (modal.classList.contains('show') && !modal.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
             modal.classList.remove('show');
@@ -458,7 +433,6 @@ function initBenchmark() {
 
     search.oninput = (e) => renderModalVersionList(e.target.value);
 
-    // Eğer veri varsa, tabloyu ve sonucu hemen çiz!
     if (latestBenchVer) {
         updateBenchmark(latestBenchVer.version);
     }
@@ -468,15 +442,14 @@ function openVersionModal() {
     const modal = document.getElementById('versionModal');
     if(!modal) return;
     modal.classList.add('show');
-    renderModalVersionList(); // Listeyi tazele
+    renderModalVersionList();
     setTimeout(() => document.getElementById('modalVersionSearch').focus(), 100);
 }
 
 function renderModalVersionList(filter = '') {
     const list = document.getElementById('modalVersionList');
     if (!list) return;
-    
-    // SADECE Benchmark verisi olanları listele (Boşları gösterme)
+
     const data = VERSIONS_DATA.filter(v => 
         v.benchmark && 
         (v.version.toLowerCase().includes(filter.toLowerCase()) || 
@@ -504,7 +477,6 @@ function renderModalVersionList(filter = '') {
     });
 }
 
-// EN ÖNEMLİ KISIM: HESAPLAMA VE ÇİZME
 window.updateBenchmark = function(ver) {
     const versionData = VERSIONS_DATA.find(d => d.version === ver);
     
@@ -512,18 +484,16 @@ window.updateBenchmark = function(ver) {
 
     const d = versionData.benchmark;
     const isEn = currentLang === 'en';
-    
-    // HESAPLAMA: (1 - (Oblit / Std)) * 100
+
     const saving = ((1 - (d.oblit / d.std)) * 100).toFixed(1);
 
-    // Buton metnini güncelle
     const btnText = document.getElementById('selectedVersionText');
     if(btnText) btnText.innerText = `${formatVersion(ver)} (${versionData.tag || versionData.type})`;
     
     const dateText = document.getElementById('benchDate');
     if(dateText) dateText.innerText = `(${versionData.date})`;
 
-    // Tabloyu Çiz
+
     const table = document.getElementById('benchTableContainer');
     if (table) {
         table.innerHTML = `
@@ -552,10 +522,8 @@ window.updateBenchmark = function(ver) {
         </div>`;
     }
 
-    // Sonuç Kutusunu Çiz (% Tasarruf)
     const resBox = document.getElementById('benchResultContainer');
     if (resBox) {
-        // %50'den büyükse yeşil, küçükse turuncu
         const bg = saving > 50 ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)';
         
         resBox.innerHTML = `
@@ -632,7 +600,6 @@ function toggleLanguage() {
     currentLang = currentLang === 'en' ? 'tr' : 'en';
     applyLang(currentLang);
     localStorage.setItem('oblit_lang', currentLang);
-    // Veri değiştiği için Sidebar ve İçeriği yenile
     renderSidebar();
     loadPage(currentPageId);
     setSearchPlaceholder();
@@ -658,7 +625,6 @@ async function handleSearch(query) {
     const menu = currentLang === 'en' ? MENU_DATA.en : MENU_DATA.tr;
     if (!menu) return;
 
-    // İçeriklerin hepsini tara
     const searchPromises = menu.flatMap(g => g.items.map(async i => {
         try { 
             const r = await fetch(`./content/${i.id}.json?v=${Date.now()}`); 
@@ -666,7 +632,6 @@ async function handleSearch(query) {
             const content = (d[currentLang] || d.en || '').toLowerCase();
             return { 
                 item: i, 
-                // Başlıkta VEYA içerikte eşleşme var mı?
                 match: i.title.toLowerCase().includes(term) || content.includes(term) 
             };
         } catch { return null; }
@@ -674,14 +639,12 @@ async function handleSearch(query) {
     
     const resultsRaw = (await Promise.all(searchPromises)).filter(x => x && x.match);
     
-    // Menü yapısına geri çevir
     const results = [];
     menu.forEach(group => {
         const matchingItems = [];
         group.items.forEach(item => {
             const hit = resultsRaw.find(x => x.item.id === item.id);
             if (hit) {
-                // Eğer başlıkta yoksa ama içerikte varsa "Found" etiketi koy
                 const isContentOnly = !item.title.toLowerCase().includes(term);
                 matchingItems.push({ ...item, isContentMatch: isContentOnly });
             }
@@ -693,23 +656,19 @@ async function handleSearch(query) {
 }
 
 function parseSyntax(text) {
-    // Ensure text is always a string
     if (!text && text !== '') return "";
     if (typeof text !== 'string') {
         text = String(text || '');
     }
     let html = text;
-    // Kod Blokları
     html = html.replace(/!\[code\]\(([\s\S]*?)\)\s*!\+\+\/\//g, (m, c) => createCodeBlock(c, true));
     html = html.replace(/!\[code\]\(([\s\S]*?)\)\s*!\+\+/g, (m, c) => createCodeBlock(c, false));
     
-    // Uyarı Kutuları
     html = html.replace(/!\[(info|warn|dang|tip|update)\]\(([\s\S]*?)\)\s*!\+\+/g, (m, type, c) => {
         const titles = currentLang === 'en' ? { info: 'INFO', warn: 'WARNING', dang: 'DANGER', tip: 'PRO TIP', update: 'UPDATE' } : { info: 'BİLGİ', warn: 'UYARI', dang: 'TEHLİKE', tip: 'İPUCU', update: 'GÜNCELLEME' };
         return `<div class="box box-${type}"><strong>${titles[type] || type.toUpperCase()}</strong><p>${formatText(c.trim())}</p></div>`;
     });
     
-    // Başlıklar
     html = html.replace(/h1\((.+)\)/g, '<h1>$1</h1>');
     html = html.replace(/h2\((.+)\)/g, '<h2>$1</h2>');
     html = html.replace(/h3\((.+)\)/g, '<h3>$1</h3>');
