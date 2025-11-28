@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>OBLIT</h1>
+  <h1>Oblit</h1>
   <p>
     <b>Obliterate Latency.</b> Zero-Dependency, High-Performance Binary Protocol for Node.js.
   </p>
