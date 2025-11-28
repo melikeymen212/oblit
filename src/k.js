@@ -1,0 +1,1 @@
+module.exports={M:65535,H:3,OP:{RAW:0,TXT:1,JSON:2},E:{S:'E_S',I:'E_I'}};

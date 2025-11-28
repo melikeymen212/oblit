@@ -1,0 +1,66 @@
+{
+    "en": [
+        { 
+            "category": "Start Here", 
+            "items": [ 
+                { "id": "introduction", "title": "Introduction" },
+                { "id": "philosophy", "title": "The Oblit Philosophy" },
+                { "id": "install", "title": "Installation Guide" }
+            ] 
+        },
+        { 
+            "category": "Core Concepts", 
+            "items": [
+                { "id": "protocol", "title": "Protocol Anatomy" }, 
+                { "id": "memory", "title": "Memory Management" },
+                { "id": "security", "title": "Security Model" }
+            ] 
+        },
+        { 
+            "category": "API Reference", 
+            "items": [ 
+                { "id": "server_api", "title": "Server API" },
+                { "id": "client_api", "title": "Client API" }
+            ] 
+        },
+        { 
+            "category": "Community", 
+            "items": [
+                { "id": "news", "title": "Changelog & Releases" },
+                { "id": "benchmark", "title": "⚡ Interactive Benchmarks" }
+            ] 
+        }
+    ],
+    "tr": [
+        { 
+            "category": "Başlangıç", 
+            "items": [ 
+                { "id": "introduction", "title": "Giriş" }, 
+                { "id": "philosophy", "title": "Oblit Felsefesi" },
+                { "id": "install", "title": "Kurulum Rehberi" }
+            ] 
+        },
+        { 
+            "category": "Temel Kavramlar", 
+            "items": [
+                { "id": "protocol", "title": "Protokol Anatomisi" }, 
+                { "id": "memory", "title": "Bellek Yönetimi" },
+                { "id": "security", "title": "Güvenlik Modeli" }
+            ] 
+        },
+        { 
+            "category": "API Referansı", 
+            "items": [ 
+                { "id": "server_api", "title": "Sunucu API" },
+                { "id": "client_api", "title": "İstemci API" }
+            ] 
+        },
+        { 
+            "category": "Topluluk", 
+            "items": [
+                { "id": "news", "title": "Sürüm Notları" },
+                { "id": "benchmark", "title": "⚡ İnteraktif Testler" }
+            ] 
+        }
+    ]
+}

@@ -1,0 +1,84 @@
+[
+    {
+        "version": "v1.0.0",
+        "date": "2025-01-27",
+        "tag": "LATEST",
+        "type": "Major",
+        "title": "🚀 First Official Release - Protocol Zero",
+        "description": "The inaugural release of OBLIT Protocol. This marks the debut of our high-performance binary protocol along with a comprehensive, professional documentation site. Built from scratch with zero dependencies, crash-free architecture, and stream reassembly logic. This release introduces the complete ecosystem: the core protocol library and an interactive documentation platform.",
+        "benchmark": {
+            "std": 1318,
+            "oblit": 585,
+            "mode": "Binary (Buffer)"
+        },
+        "changes": {
+            "added": [
+                "🎯 **Core Protocol Engine**: Complete binary protocol implementation with 3-byte header architecture",
+                "📡 **Server Module**: TCP server with event-driven architecture, automatic stream reassembly, and crash-free error handling",
+                "🔌 **Client Module**: Lightweight TCP client with auto-type detection and zero-copy buffer management",
+                "📦 **Packet Packer/Unpacker**: Binary-first data serialization supporting RAW, TXT, and JSON opcodes",
+                "🛡️ **Security Features**: Oversized packet rejection (64KB limit), buffer overflow protection, DOS mitigation",
+                "⚡ **Stream Reassembly**: Stateful accumulation buffer solves TCP fragmentation, ensuring complete packet delivery",
+                "🧠 **Auto-Type Detection**: Intelligent payload type detection for seamless data handling",
+                "📚 **Interactive Documentation Site**: Professional, responsive docs platform with dark/light themes, real-time search, and live benchmarks",
+                "🌐 **Multi-Language Support**: Complete English and Turkish translations for all documentation",
+                "📊 **Benchmark Suite**: Interactive performance comparison tools showing 55%+ bandwidth savings",
+                "🎨 **Modern UI/UX**: Beautiful, developer-friendly documentation interface with syntax highlighting and code examples",
+                "📖 **Comprehensive Guides**: Installation tutorials, API reference, security documentation, and real-world examples",
+                "🔧 **Build System**: esbuild integration for optimized minified builds (<2KB minzipped)",
+                "⚙️ **Zero Dependencies**: Pure Node.js implementation, no external packages required",
+                "🎯 **Event-Driven Architecture**: Full EventEmitter integration for flexible, scalable server/client applications"
+            ],
+            "fixed": [],
+            "changed": [],
+            "removed": []
+        },
+        "architecture": {
+            "packet_structure": {
+                "header_size": 3,
+                "length_field": "2 bytes (UInt16BE, Big-Endian)",
+                "opcode_field": "1 byte (UInt8)",
+                "max_payload_size": "65535 bytes (64KB)",
+                "network_byte_order": "Big-Endian (standard)"
+            },
+            "opcodes": {
+                "OP.RAW": {
+                    "value": 0,
+                    "description": "Raw binary data (Buffer)",
+                    "use_case": "Game data, streams, highest performance"
+                },
+                "OP.TXT": {
+                    "value": 1,
+                    "description": "Text data (String)",
+                    "use_case": "Chat messages, commands"
+                },
+                "OP.JSON": {
+                    "value": 2,
+                    "description": "JavaScript Object (Object)",
+                    "use_case": "Complex structured data"
+                }
+            },
+            "core_modules": {
+                "c.js": "Core packet packer/unpacker with binary serialization",
+                "k.js": "Constants (M=65535, H=3, OP codes, errors)",
+                "n.js": "Server (S) and Client (C) classes with event-driven architecture",
+                "server.js": "Server implementation with TCP socket management",
+                "client.js": "Client implementation with auto-reconnect logic",
+                "v2core.js": "Core protocol v2 implementation"
+            },
+            "performance_features": {
+                "zero_copy_parsing": "Uses Buffer.subarray() for zero-copy packet extraction",
+                "stream_reassembly": "Stateful buffer accumulation for TCP fragmentation handling",
+                "auto_type_detection": "Intelligent type detection for seamless data handling",
+                "crash_free_handling": "Graceful error handling prevents server crashes",
+                "efficient_broadcasting": "Single packet creation for multiple socket writes"
+            },
+            "security_measures": {
+                "packet_size_limit": "64KB maximum payload size enforced",
+                "buffer_overflow_protection": "Automatic connection termination on oversized packets",
+                "dos_mitigation": "Limits prevent memory exhaustion attacks",
+                "error_isolation": "Client errors don't affect server stability"
+            }
+        }
+    }
+]

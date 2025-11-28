@@ -1,0 +1,35 @@
+{
+  "name": "oblit",
+  "version": "1.0.3",
+  "description": "Obliterate latency. Zero-dependency, binary-first, crash-free network protocol for Node.js. 50% bandwidth savings.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node benchmark.js",
+    "build": "esbuild index.js --bundle --minify --platform=node --outfile=oblit.min.js",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SENIN_KULLANICI_ADIN/oblit.git"
+  },
+  "keywords": [
+    "protocol",
+    "network",
+    "binary",
+    "buffer",
+    "performance",
+    "fast",
+    "tcp"
+  ],
+  "author": "Oblit Creator",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "files": [
+    "src",
+    "index.js",
+    "oblit.min.js",
+    "README.md"
+  ]
+}
